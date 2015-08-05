@@ -67,9 +67,6 @@
 		// Function to hide the scroll areas. Reset everything.
 		var _hide = function(e) {
 			both_el.hide();
-			timestamp = undefined;
-			scrolltop = 0;
-			scrollbottom = 0;
 			return true;
 		};
 		

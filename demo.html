@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>dnd-page-scroll demo</title>
+  <script>function drag(ev) {ev.dataTransfer.setData("text", ev.target.id);}</script>
+</head>
+
+<body style="min-height: 300vh">
+  <button onclick="dndPageScroll.default()">Enable dnd-page-scroll</button>
+
+  <span draggable="true"
+        ondragstart="drag(event)"
+        style="cursor:pointer;color:snow;background:deepskyblue">
+    Try dragging me to the very bottom of the page
+  </span>
+
+
+  <script src="lib/dnd-page-scroll.js"></script>
+</body>
+</html>

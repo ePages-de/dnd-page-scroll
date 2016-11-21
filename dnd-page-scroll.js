@@ -77,7 +77,15 @@ export default function (_options = {}) {
   ;[topElement, bottomElement].forEach(el => el.addEventListener('dragover', throttledScroll))
 
   // When a DND drag event starts, show the scroll areas
-  eventDelegate.addEventListener('dragover', () => show(topElement, bottomElement))
+  eventDelegate.addEventListener('dragover', e => {
+    // Don't allow dropping on scroll areas
+    if (e.target === topElement || e.target === bottomElement) {
+      e.dataTransfer.dropEffect = 'none'
+      e.preventDefault()
+    }
+
+    return show(topElement, bottomElement)
+  })
 
   // When DND ends, hide it.
   eventDelegate.addEventListener('dragend', () => hide(topElement, bottomElement))

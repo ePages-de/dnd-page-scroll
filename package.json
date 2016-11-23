@@ -1,6 +1,6 @@
 {
   "name": "dnd-page-scroll",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Add support scrolling of page during drag and drop (DnD) when not supported by the browser.",
   "main": "lib/dnd-page-scroll.js",
   "scripts": {

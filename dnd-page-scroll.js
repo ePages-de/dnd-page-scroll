@@ -22,17 +22,6 @@ const css = (styles, ...elements) => {
     styleAttributes.forEach(attr => { element.style[attr] = styles[attr] })
   })
 }
-const throttle = (fn, delay) => {
-  let go = true
-
-  return function (...args) {
-    if (!go) return
-
-    fn(...args)
-    go = false
-    setTimeout(() => { go = true }, delay)
-  }
-}
 
 export default function (_options = {}) {
   const defaults = {
@@ -71,25 +60,39 @@ export default function (_options = {}) {
   const triggerScroll = options.node === document.body
     ? amount => window.scrollBy(0, amount)
     : amount => { options.node.scrollTop += amount }
-  const throttledScroll = throttle(
-    e => triggerScroll(e.target === topElement ? -options.scrollBy : options.scrollBy),
-  options.delay)
+
+  let doScroll = null
+
+  const clearScrollInterval = () => {
+    clearInterval(doScroll)
+    doScroll = null
+  }
 
   ;[topElement, bottomElement].forEach(el => el.addEventListener('dragover', e => {
-    throttledScroll(e)
+    if (doScroll == null) {
+      doScroll = setInterval(() => triggerScroll(e.target === topElement ? -options.scrollBy : options.scrollBy), options.delay)
+    }
 
     // Don't allow dropping on scroll areas
     e.dataTransfer.dropEffect = 'none'
     e.preventDefault()
   }))
 
+  ;[topElement, bottomElement].forEach(el => el.addEventListener('dragleave', () => clearScrollInterval()))
+
   // When a DND drag event starts, show the scroll areas
   eventDelegate.addEventListener('dragover', e => show(topElement, bottomElement))
 
   // When DND ends, hide it.
-  eventDelegate.addEventListener('dragend', () => hide(topElement, bottomElement))
+  eventDelegate.addEventListener('dragend', () => {
+    clearScrollInterval()
+    hide(topElement, bottomElement)
+  })
 
   // When dragging files from Explorer/Finder dragend is not triggered.
   // Work around this by hiding areas when the mouse enters one.
-  ;[topElement, bottomElement].forEach(el => el.addEventListener('mouseover', () => hide(topElement, bottomElement)))
+  ;[topElement, bottomElement].forEach(el => el.addEventListener('mouseover', () => {
+    clearScrollInterval()
+    hide(topElement, bottomElement)
+  }))
 }
